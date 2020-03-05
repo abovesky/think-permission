@@ -6,14 +6,13 @@ use think\permission\PermissionRegistrar;
 
 trait RefreshesPermissionCache
 {
-    public static function bootRefreshesPermissionCache()
+    public static function onAfterWrite()
     {
-        static::saved(function () {
-            app(PermissionRegistrar::class)->forgetCachedPermissions();
-        });
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
+    }
 
-        static::deleted(function () {
-            app(PermissionRegistrar::class)->forgetCachedPermissions();
-        });
+    public static function onAfterDelete()
+    {
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
     }
 }
