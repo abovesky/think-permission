@@ -6,7 +6,7 @@ use think\Collection;
 use think\permission\contract\Role;
 use Illuminate\Database\Eloquent\Builder;
 use think\permission\PermissionRegistrar;
-use think\model\relation\MorphToMany;
+use think\model\relation\belongsToMany;
 
 trait HasRoles
 {
@@ -32,11 +32,10 @@ trait HasRoles
         return $this->roleClass;
     }
 
-    public function roles(): MorphToMany
+    public function roles(): belongsToMany
     {
-        return $this->morphTo(
-            ['model_type', config('permission.column_names.model_morph_key')],
-            config('permission.table_names.model_has_roles')
+        return $this->belongsToMany(
+            config('permission.models.role')
         );
     }
 

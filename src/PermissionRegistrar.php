@@ -127,7 +127,7 @@ class PermissionRegistrar
             $this->permissions = $this->cache->remember(self::$cacheKey, self::$cacheExpirationTime, function () {
                 return $this->getPermissionClass()
                     ->with('roles')
-                    ->get();
+                    ->select();
             });
         }
 

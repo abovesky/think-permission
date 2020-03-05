@@ -49,14 +49,13 @@ class Role extends Model implements RoleContract
     /**
      * A role belongs to some users of the model associated with its guard.
      */
-    public function users(): MorphToMany
+    public function users(): belongsToMany
     {
-        return $this->morphedByMany(
-            getModelForGuard($this->attributes['guard_name']),
-            'model',
-            config('permission.table_names.model_has_roles'),
+        return $this->belongsToMany(
+            config('permission.models.user'),
+            config('permission.table_names.role_has_user'),
             'role_id',
-            config('permission.column_names.model_morph_key')
+            'user_id'
         );
     }
 

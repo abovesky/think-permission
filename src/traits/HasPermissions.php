@@ -6,7 +6,7 @@ use think\Collection;
 use Illuminate\Database\Eloquent\Builder;
 use think\permission\PermissionRegistrar;
 use think\permission\contract\Permission;
-use think\model\relation\MorphToMany;
+use think\model\relation\belongsToMany;
 use think\permission\exception\PermissionDoesNotExist;
 
 trait HasPermissions
@@ -34,14 +34,10 @@ trait HasPermissions
     /**
      * A model may have multiple direct permissions.
      */
-    public function permissions(): MorphToMany
+    public function permissions(): belongsToMany
     {
-        return $this->morphToMany(
-            config('permission.models.permission'),
-            'model',
-            config('permission.table_names.model_has_permissions'),
-            config('permission.column_names.model_morph_key'),
-            'permission_id'
+        return $this->belongsToMany(
+            config('permission.models.permission')
         );
     }
 
@@ -353,7 +349,7 @@ trait HasPermissions
         if (is_array($permissions)) {
             return $permissionClass
                 ->whereIn('slug', $permissions)
-                ->get();
+                ->select();
         }
 
         return $permissions;

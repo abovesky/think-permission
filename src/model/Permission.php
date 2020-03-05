@@ -8,7 +8,6 @@ use think\permission\traits\HasRoles;
 use think\permission\traits\RefreshesPermissionCache;
 use think\permission\PermissionRegistrar;
 use think\model\relation\BelongsToMany;
-use think\model\relation\MorphToMany;
 use think\permission\exception\PermissionDoesNotExist;
 use think\permission\exception\PermissionAlreadyExists;
 use think\permission\contract\Permission as PermissionContract;
@@ -29,7 +28,7 @@ class Permission extends Model implements PermissionContract
 
     public static function create(array $attributes = [])
     {
-        $permission = static::getPermissions(['slug' => $attributes['slug'], 'guard_name' => $attributes['guard_name']])->first();
+        $permission = static::getPermissions(['slug' => $attributes['slug']])->first();
 
         if ($permission) {
             throw PermissionAlreadyExists::create($attributes['slug']);
@@ -54,14 +53,13 @@ class Permission extends Model implements PermissionContract
     /**
      * A permission belongs to some users of the model associated with its guard.
      */
-    public function users(): MorphToMany
+    public function users(): belongsToMany
     {
-        return $this->morphedByMany(
-            getModelForGuard($this->attributes['guard_name']),
-            'model',
-            config('permission.table_names.model_has_permissions'),
+        return $this->belongsToMany(
+            config('permission.models.user'),
+            config('permission.table_names.user_has_permissions'),
             'permission_id',
-            config('permission.column_names.model_morph_key')
+            'user_id'
         );
     }
 
@@ -76,7 +74,7 @@ class Permission extends Model implements PermissionContract
      */
     public static function findBySlug(string $slug): PermissionContract
     {
-        $permission = static::getPermissions(['name' => $name, 'guard_name' => $guardName])->first();
+        $permission = static::getPermissions(['slug' => $slug])->first();
         if (! $permission) {
             throw PermissionDoesNotExist::withSlug($slug);
         }
@@ -95,7 +93,7 @@ class Permission extends Model implements PermissionContract
      */
     public static function findById(int $id): PermissionContract
     {
-        $permission = static::getPermissions(['id' => $id, 'guard_name' => $guardName])->first();
+        $permission = static::getPermissions(['id' => $id])->first();
 
         if (! $permission) {
             throw PermissionDoesNotExist::withId($id);
