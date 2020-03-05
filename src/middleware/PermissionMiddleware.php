@@ -1,22 +1,27 @@
 <?php
 
-namespace think\permission;
+namespace think\permission\middleware;
 
-use traits\controller\Jump;
+use think\permission\exception\UnauthorizedException;
 
 class PermissionMiddleware
 {
-	use Jump;
+    public function handle($request, \Closure $next, $permission)
+    {
+        if (app('auth')->guest()) {
+            throw UnauthorizedException::notLoggedIn();
+        }
 
-	public function handle($request, \Closure $next, $permission)
-	{
-		$controller = $request->controller();
-		$action     = $request->action();
+        $permissions = is_array($permission)
+            ? $permission
+            : explode('|', $permission);
 
-		if (!can(strtolower(sprintf('%s@%s', $controller, $action)))) {
-			$this->error('没有权限操作');
-		}
+        foreach ($permissions as $permission) {
+            if (app('auth')->user()->can($permission)) {
+                return $next($request);
+            }
+        }
 
-		return $next($request);
-	}
+        throw UnauthorizedException::forPermissions($permissions);
+    }
 }

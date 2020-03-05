@@ -2,6 +2,7 @@
 
 namespace think\permission\middleware;
 
+use Illuminate\Support\Facades\Auth;
 use think\permission\exception\UnauthorizedException;
 
 class RoleMiddleware
