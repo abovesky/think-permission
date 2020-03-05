@@ -2,12 +2,12 @@
 
 namespace think\permission\traits;
 
-use Illuminate\Support\Collection;
+use think\Collection;
 use Illuminate\Database\Eloquent\Builder;
-use Spatie\Permission\PermissionRegistrar;
-use Spatie\Permission\Contracts\Permission;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Spatie\Permission\Exceptions\PermissionDoesNotExist;
+use think\permission\PermissionRegistrar;
+use think\permission\contract\Permission;
+use think\model\relation\MorphToMany;
+use think\permission\exception\PermissionDoesNotExist;
 
 trait HasPermissions
 {
@@ -121,15 +121,6 @@ trait HasPermissions
         }
 
         return $this->hasDirectPermission($permission) || $this->hasPermissionViaRole($permission);
-    }
-
-    /**
-     * @deprecated since 2.35.0
-     * @alias of hasPermissionTo()
-     */
-    public function hasUncachedPermissionTo($permission): bool
-    {
-        return $this->hasPermissionTo($permission);
     }
 
     /**

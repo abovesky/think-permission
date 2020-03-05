@@ -4,6 +4,9 @@ namespace think\permission\traits;
 
 use think\Collection;
 use think\permission\contract\Role;
+use Illuminate\Database\Eloquent\Builder;
+use think\permission\PermissionRegistrar;
+use think\model\relation\MorphToMany;
 
 trait HasRoles
 {
@@ -29,7 +32,7 @@ trait HasRoles
         return $this->roleClass;
     }
 
-    public function roles()
+    public function roles(): MorphToMany
     {
         return $this->morphTo(
             ['model_type', config('permission.column_names.model_morph_key')],
