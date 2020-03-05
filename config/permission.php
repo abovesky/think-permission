@@ -26,6 +26,8 @@ return [
 
         'role' => think\permission\model\Role::class,
 
+        'user' => think\permission\model\User::class,
+
     ],
 
     'table_names' => [
@@ -36,7 +38,7 @@ return [
          * default value but you may easily change it to any table you like.
          */
 
-        'role' => 'roles',
+        'role' => 'role',
 
         /*
          * When using the "HasPermissions" trait from this package, we need to know which
@@ -44,7 +46,7 @@ return [
          * default value but you may easily change it to any table you like.
          */
 
-        'permission' => 'permissions',
+        'permission' => 'permission',
 
         /*
          * When using the "HasPermissions" trait from this package, we need to know which
@@ -52,7 +54,7 @@ return [
          * basic default value but you may easily change it to any table you like.
          */
 
-        'model_has_permissions' => 'model_has_permissions',
+        'user_has_permissions' => 'user_has_permissions',
 
         /*
          * When using the "HasRoles" trait from this package, we need to know which
@@ -60,7 +62,7 @@ return [
          * basic default value but you may easily change it to any table you like.
          */
 
-        'model_has_roles' => 'model_has_roles',
+        'user_has_roles' => 'user_has_roles',
 
         /*
          * When using the "HasRoles" trait from this package, we need to know which
@@ -91,12 +93,6 @@ return [
      */
 
     'display_permission_in_exception' => false,
-
-    /*
-     * By default wildcard permission lookups are disabled.
-     */
-
-    'enable_wildcard_permission' => false,
 
     'cache' => [
 
