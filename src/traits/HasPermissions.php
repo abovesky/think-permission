@@ -2,7 +2,7 @@
 
 namespace think\permission\traits;
 
-use think\Collection;
+use think\permission\Collection;
 use think\db\Query;
 use think\permission\PermissionRegistrar;
 use think\permission\contract\Permission;

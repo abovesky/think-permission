@@ -2,19 +2,19 @@
 
 namespace think\permission;
 
-use Illuminate\Cache\CacheManager;
-use Illuminate\Support\Collection;
-use Spatie\Permission\Contracts\Role;
+use think\Cache as CacheManager;
+use think\cache\Driver;
+use think\permission\contract\Role;
 use Illuminate\Contracts\Auth\Access\Gate;
-use Spatie\Permission\Contracts\Permission;
+use think\permission\contract\Permission;
 use Illuminate\Contracts\Auth\Access\Authorizable;
 
 class PermissionRegistrar
 {
-    /** @var \Illuminate\Contracts\Cache\Repository */
+    /** @var Driver */
     protected $cache;
 
-    /** @var \Illuminate\Cache\CacheManager */
+    /** @var CacheManager */
     protected $cacheManager;
 
     /** @var string */
@@ -23,7 +23,7 @@ class PermissionRegistrar
     /** @var string */
     protected $roleClass;
 
-    /** @var \Illuminate\Support\Collection */
+    /** @var Collection */
     protected $permissions;
 
     /** @var \DateInterval|int */
@@ -38,7 +38,7 @@ class PermissionRegistrar
     /**
      * PermissionRegistrar constructor.
      *
-     * @param \Illuminate\Cache\CacheManager $cacheManager
+     * @param CacheManager $cacheManager
      */
     public function __construct(CacheManager $cacheManager)
     {
@@ -59,7 +59,11 @@ class PermissionRegistrar
         $this->cache = $this->getCacheStoreFromConfig();
     }
 
-    protected function getCacheStoreFromConfig(): \Illuminate\Contracts\Cache\Repository
+    /**
+     * 从配置文件获取缓存驱动
+     * @return Driver
+     */
+    protected function getCacheStoreFromConfig(): Driver
     {
         // the 'default' fallback here is from the permission.php config file, where 'default' means to use config(cache.default)
         $cacheDriver = config('permission.cache.store', 'default');
@@ -71,7 +75,7 @@ class PermissionRegistrar
 
         // if an undefined cache store is specified, fallback to 'array' which is Laravel's closest equiv to 'none'
         if (! \array_key_exists($cacheDriver, config('cache.stores'))) {
-            $cacheDriver = 'array';
+            $cacheDriver = 'file';
         }
 
         return $this->cacheManager->store($cacheDriver);
@@ -95,13 +99,15 @@ class PermissionRegistrar
     }
 
     /**
-     * Flush the cache.
+     * 删除缓存
+     * @return bool
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function forgetCachedPermissions()
     {
         $this->permissions = null;
 
-        return $this->cache->forget(self::$cacheKey);
+        return $this->cache->delete(self::$cacheKey);
     }
 
     /**
@@ -118,8 +124,8 @@ class PermissionRegistrar
      * Get the permissions based on the passed params.
      *
      * @param array $params
-     *
-     * @return \Illuminate\Support\Collection
+     * @return Collection
+     * @throws \throwable
      */
     public function getPermissions(array $params = []): Collection
     {
@@ -143,13 +149,18 @@ class PermissionRegistrar
     /**
      * Get an instance of the permission class.
      *
-     * @return \Spatie\Permission\Contracts\Permission
+     * @return Permission
      */
     public function getPermissionClass(): Permission
     {
         return app($this->permissionClass);
     }
 
+    /**
+     * 设置权限类
+     * @param $permissionClass
+     * @return $this
+     */
     public function setPermissionClass($permissionClass)
     {
         $this->permissionClass = $permissionClass;
@@ -158,9 +169,8 @@ class PermissionRegistrar
     }
 
     /**
-     * Get an instance of the role class.
-     *
-     * @return \Spatie\Permission\Contracts\Role
+     * 获取角色类实例
+     * @return Role
      */
     public function getRoleClass(): Role
     {
@@ -168,12 +178,11 @@ class PermissionRegistrar
     }
 
     /**
-     * Get the instance of the Cache Store.
-     *
-     * @return \Illuminate\Contracts\Cache\Store
+     * 获取缓存对象
+     * @return object
      */
-    public function getCacheStore(): \Illuminate\Contracts\Cache\Store
+    public function getCacheStore()
     {
-        return $this->cache->getStore();
+        return $this->cache->handler();
     }
 }

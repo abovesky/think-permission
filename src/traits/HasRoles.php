@@ -2,7 +2,7 @@
 
 namespace think\permission\traits;
 
-use think\Collection;
+use think\permission\Collection;
 use think\db\Query;
 use think\permission\contract\Role;
 use think\permission\PermissionRegistrar;
@@ -221,11 +221,11 @@ trait HasRoles
             return $this->roles->contains('id', $roles->id);
         }
 
-        $roles = collect()->make($roles)->map(function ($role) {
+        $roles = collect($roles)->map(function ($role) {
             return $role instanceof Role ? $role->slug : $role;
         });
 
-        return $roles->intersect($this->getRoleSlugs()) == $roles;
+        return $roles->intersect($this->getRoleSlugs()) === $roles;
     }
 
     /**

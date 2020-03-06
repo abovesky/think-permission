@@ -1,25 +1,21 @@
 <?php
 
+use think\permission\Collection;
 use think\permission\facade\Permission;
 use think\permission\facade\Role;
 
 if (!function_exists('collect')) {
     /**
-     * 数组转换为数据集对象
-     * @param array $resultSet 数据集数组
-     * @return \think\model\Collection|\think\Collection
+     * Create a collection from the given value.
+     *
+     * @param mixed $value
+     * @return Collection
      */
-    function collect($resultSet)
+    function collect($value = null)
     {
-        $item = current($resultSet);
-        if ($item instanceof Model) {
-            return \think\model\Collection::make($resultSet);
-        } else {
-            return \think\Collection::make($resultSet);
-        }
+        return new Collection($value);
     }
 }
-
 
 /**
  * 是否有权限
