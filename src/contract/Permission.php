@@ -3,13 +3,14 @@
 namespace think\permission\contract;
 
 use think\model\relation\BelongsToMany;
+use think\permission\exception\PermissionDoesNotExist;
 
 interface Permission
 {
     /**
      * A permission can be applied to roles.
      *
-     * @return \think\model\relation\BelongsToMany
+     * @return BelongsToMany
      */
     public function roles(): BelongsToMany;
 
@@ -18,7 +19,7 @@ interface Permission
      *
      * @param string $slug
      *
-     * @throws \think\permission\exception\PermissionDoesNotExist
+     * @throws PermissionDoesNotExist
      *
      * @return Permission
      */
@@ -29,7 +30,7 @@ interface Permission
      *
      * @param int $id
      *
-     * @throws \think\permission\exception\PermissionDoesNotExist
+     * @throws PermissionDoesNotExist
      *
      * @return Permission
      */

@@ -3,8 +3,8 @@
 namespace think\permission\traits;
 
 use think\Collection;
+use think\db\Query;
 use think\permission\contract\Role;
-use Illuminate\Database\Eloquent\Builder;
 use think\permission\PermissionRegistrar;
 use think\model\relation\belongsToMany;
 
@@ -41,13 +41,11 @@ trait HasRoles
 
     /**
      * Scope the model query to certain roles only.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param string|array|\Spatie\Permission\Contracts\Role|\Illuminate\Support\Collection $roles
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @param Query $query
+     * @param string|array|Role|Collection $roles
+     * @return Query
      */
-    public function scopeRole(Builder $query, $roles): Builder
+    public function scopeRole(Query $query, $roles): Query
     {
         if ($roles instanceof Collection) {
             $roles = $roles->all();
@@ -67,7 +65,7 @@ trait HasRoles
             return $this->getRoleClass()->{$method}($role);
         }, $roles);
 
-        return $query->whereHas('roles', function (Builder $subQuery) use ($roles) {
+        return $query->whereHas('roles', function (Query $subQuery) use ($roles) {
             $subQuery->whereIn(config('permission.table_names.roles').'.id', \array_column($roles, 'id'));
         });
     }
@@ -75,7 +73,7 @@ trait HasRoles
     /**
      * Assign the given role to the model.
      *
-     * @param array|string|\Spatie\Permission\Contracts\Role ...$roles
+     * @param array|string|Role ...$roles
      *
      * @return $this
      */
@@ -124,7 +122,8 @@ trait HasRoles
     /**
      * Revoke the given role from the model.
      *
-     * @param string|\Spatie\Permission\Contracts\Role $role
+     * @param string|Role $role
+     * @return $this
      */
     public function removeRole($role)
     {
@@ -140,7 +139,7 @@ trait HasRoles
     /**
      * Remove all current roles and set the given ones.
      *
-     * @param  array|\Spatie\Permission\Contracts\Role|string  ...$roles
+     * @param  array|string|Role  ...$roles
      *
      * @return $this
      */
@@ -154,7 +153,7 @@ trait HasRoles
     /**
      * Determine if the model has (one of) the given role(s).
      *
-     * @param string|int|array|\Spatie\Permission\Contracts\Role|\Illuminate\Support\Collection $roles
+     * @param string|int|array|Role|Collection $roles
      * @return bool
      */
     public function hasRole($roles): bool
@@ -191,9 +190,9 @@ trait HasRoles
     /**
      * Determine if the model has any of the given role(s).
      *
-     * Alias to hasRole() but without Guard controls
+     * Alias to hasRole()
      *
-     * @param string|int|array|\Spatie\Permission\Contracts\Role|\Illuminate\Support\Collection $roles
+     * @param string|int|array|Role|Collection $roles
      *
      * @return bool
      */
@@ -205,7 +204,7 @@ trait HasRoles
     /**
      * Determine if the model has all of the given role(s).
      *
-     * @param  string|array|\Spatie\Permission\Contracts\Role|\Illuminate\Support\Collection  $roles
+     * @param  string|array|Role|Collection $roles
      * @return bool
      */
     public function hasAllRoles($roles): bool
