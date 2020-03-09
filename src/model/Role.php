@@ -15,8 +15,6 @@ class Role extends Model implements RoleContract
     use HasPermissions;
     use RefreshesPermissionCache;
 
-    protected $table;
-
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
@@ -64,15 +62,17 @@ class Role extends Model implements RoleContract
      *
      * @param string $slug
      *
-     * @return \think\permission\contract\Role|\think\permission\model\Role
+     * @return RoleContract|\think\permission\model\Role
      *
-     * @throws \think\permission\exception\RoleDoesNotExist
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
      */
     public static function findBySlug(string $slug): RoleContract
     {
         $role = static::where('slug', $slug)->find();
 
-        if (! $role) {
+        if (!$role) {
             throw RoleDoesNotExist::withSlug($slug);
         }
 
@@ -83,7 +83,7 @@ class Role extends Model implements RoleContract
     {
         $role = static::where('id', $id)->find();
 
-        if (! $role) {
+        if (!$role) {
             throw RoleDoesNotExist::withId($id);
         }
 

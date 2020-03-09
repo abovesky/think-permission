@@ -2,6 +2,7 @@
 
 namespace think\permission\traits;
 
+use think\Model;
 use think\permission\Collection;
 use think\db\Query;
 use think\permission\contract\Role;
@@ -14,7 +15,7 @@ trait HasRoles
 
     private $roleClass;
 
-    public static function onBeforeDelete($model)
+    public static function onBeforeDelete(Model $model)
     {
         if (method_exists($model, 'isForceDeleting') && ! $model->isForceDeleting()) {
             return;

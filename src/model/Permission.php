@@ -3,7 +3,7 @@
 namespace think\permission\model;
 
 use think\Model;
-use think\Collection;
+use think\permission\Collection;
 use think\permission\traits\HasRoles;
 use think\permission\traits\RefreshesPermissionCache;
 use think\permission\PermissionRegistrar;
@@ -16,8 +16,6 @@ class Permission extends Model implements PermissionContract
 {
     use HasRoles;
     use RefreshesPermissionCache;
-
-    protected $table;
 
     public function __construct(array $attributes = [])
     {
@@ -65,12 +63,9 @@ class Permission extends Model implements PermissionContract
 
     /**
      * Find a permission by its slug.
-     *
      * @param string $slug
-     *
-     * @throws \Spatie\Permission\Exceptions\PermissionDoesNotExist
-     *
-     * @return \Spatie\Permission\Contracts\Permission
+     * @return PermissionContract
+     * @throws PermissionDoesNotExist
      */
     public static function findBySlug(string $slug): PermissionContract
     {
@@ -84,12 +79,9 @@ class Permission extends Model implements PermissionContract
 
     /**
      * Find a permission by its id.
-     *
      * @param int $id
-     *
-     * @throws \Spatie\Permission\Exceptions\PermissionDoesNotExist
-     *
-     * @return \Spatie\Permission\Contracts\Permission
+     * @return PermissionContract
+     * @throws PermissionDoesNotExist
      */
     public static function findById(int $id): PermissionContract
     {
@@ -104,6 +96,8 @@ class Permission extends Model implements PermissionContract
 
     /**
      * Get the current cached permissions.
+     * @param array $params
+     * @return Collection
      */
     protected static function getPermissions(array $params = []): Collection
     {
